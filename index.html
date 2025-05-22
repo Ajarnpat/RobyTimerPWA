@@ -24,6 +24,7 @@
       width: 100%;
       max-width: 500px;
       text-align: center;
+      transition: background-color 0.5s ease;
     }
     .clock {
       background-color: #e0f7fa;
@@ -128,11 +129,14 @@
     }
 
     function startTimer(n) {
+      // Reset panel color on (re)start
+      const panel = document.getElementById('panel' + n);
+      panel.style.backgroundColor = 'yellow';
+
       const h = parseInt(document.getElementById('h' + n).value) || 0;
       const m = parseInt(document.getElementById('m' + n).value) || 0;
       const s = parseInt(document.getElementById('s' + n).value) || 0;
       const totalSeconds = h * 3600 + m * 60 + s;
-
       if (totalSeconds <= 0) return;
 
       const display = document.getElementById('display' + n);
@@ -145,13 +149,15 @@
         display.textContent = formatTime(remaining);
 
         if (remaining === warnTime && warnTime > 0) {
-          document.getElementById('warnSound').play();
+          document.getElementById('warnSound').play().catch(() => {});
+          panel.style.backgroundColor = 'orange';
         }
 
         if (remaining <= 0) {
           clearInterval(timers[n]);
           display.textContent = "00:00:00";
-          document.getElementById('finalSound').play();
+          document.getElementById('finalSound').play().catch(() => {});
+          panel.style.backgroundColor = 'red';
         }
       }, 1000);
     }
@@ -162,7 +168,9 @@
 
     function resetTimer(n) {
       clearInterval(timers[n]);
-      document.getElementById('display' + n).textContent = "00:00:00";
+      const display = document.getElementById('display' + n);
+      display.textContent = "00:00:00";
+      document.getElementById('panel' + n).style.backgroundColor = 'yellow';
     }
 
     function startAllTimers() {
