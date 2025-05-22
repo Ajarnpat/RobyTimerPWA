@@ -115,11 +115,31 @@
     <button onclick="startAllTimers()">Start All Timers</button>
   </div>
 
-  <audio id="warnSound" src="audio/beep_short.ogg" preload="auto"></audio>
-  <audio id="finalSound" src="audio/alarm_clock.ogg" preload="auto"></audio>
+  <audio id="warnSound" preload="auto">
+    <source src="audio/beep_short.ogg" type="audio/ogg">
+    <source src="audio/beep_short.mp3" type="audio/mpeg">
+    Your browser does not support audio.
+  </audio>
+  <audio id="finalSound" preload="auto">
+    <source src="audio/alarm_clock.ogg" type="audio/ogg">
+    <source src="audio/alarm_clock.mp3" type="audio/mpeg">
+    Your browser does not support audio.
+  </audio>
 
   <script>
     let timers = {};
+
+    // Unlock audio on first user interaction
+    window.addEventListener('load', () => {
+      const warn = document.getElementById('warnSound');
+      const fin = document.getElementById('finalSound');
+      const unlock = () => {
+        warn.play().then(() => warn.pause()).catch(()=>{});
+        fin.play().then(() => fin.pause()).catch(()=>{});
+        document.body.removeEventListener('click', unlock);
+      };
+      document.body.addEventListener('click', unlock);
+    });
 
     function formatTime(seconds) {
       const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
@@ -129,19 +149,18 @@
     }
 
     function startTimer(n) {
-      // Reset panel color on (re)start
       const panel = document.getElementById('panel' + n);
       panel.style.backgroundColor = 'yellow';
 
       const h = parseInt(document.getElementById('h' + n).value) || 0;
       const m = parseInt(document.getElementById('m' + n).value) || 0;
       const s = parseInt(document.getElementById('s' + n).value) || 0;
-      const totalSeconds = h * 3600 + m * 60 + s;
-      if (totalSeconds <= 0) return;
+      const total = h * 3600 + m * 60 + s;
+      if (total <= 0) return;
 
       const display = document.getElementById('display' + n);
       const warnTime = (parseInt(document.getElementById('warning').value) || 0) * 60;
-      let remaining = totalSeconds;
+      let remaining = total;
 
       clearInterval(timers[n]);
       timers[n] = setInterval(() => {
@@ -149,14 +168,13 @@
         display.textContent = formatTime(remaining);
 
         if (remaining === warnTime && warnTime > 0) {
-          document.getElementById('warnSound').play().catch(() => {});
+          document.getElementById('warnSound').play().catch(()=>{});
           panel.style.backgroundColor = 'orange';
         }
-
         if (remaining <= 0) {
           clearInterval(timers[n]);
           display.textContent = "00:00:00";
-          document.getElementById('finalSound').play().catch(() => {});
+          document.getElementById('finalSound').play().catch(()=>{});
           panel.style.backgroundColor = 'red';
         }
       }, 1000);
@@ -168,8 +186,7 @@
 
     function resetTimer(n) {
       clearInterval(timers[n]);
-      const display = document.getElementById('display' + n);
-      display.textContent = "00:00:00";
+      document.getElementById('display' + n).textContent = "00:00:00";
       document.getElementById('panel' + n).style.backgroundColor = 'yellow';
     }
 
@@ -180,14 +197,13 @@
     }
 
     function updateTime() {
-      const now = new Date();
-      document.getElementById("currentTime").textContent = now.toLocaleTimeString();
+      document.getElementById("currentTime").textContent = new Date().toLocaleTimeString();
     }
     setInterval(updateTime, 1000);
     updateTime();
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
+      window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js');
       });
     }
