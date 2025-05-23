@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roby Timer and Notes</n  <link rel="manifest" href="manifest.json">
+  <title>Roby Timer and Notes</title>
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4f8fb">
   <style>
     html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background-color: #f4f8fb; }
@@ -155,9 +156,10 @@
     function startAllTimers() { startTimer(1); startTimer(2); startTimer(3); }
 
     function updateTime() { document.getElementById('currentTime').textContent = new Date().toLocaleTimeString(); }
-    setInterval(updateTime,1000); updateTime();
+    setInterval(updateTime,1000);
+    updateTime();
 
-    if('serviceWorker' in navigator) window.addEventListener('load', ()=> navigator.serviceWorker.register('service-worker.js'));
+    if('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
   </script>
 </body>
 </html>
