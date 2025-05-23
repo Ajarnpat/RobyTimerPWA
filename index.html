@@ -7,64 +7,29 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4f8fb">
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background: #f4f8fb;
-    }
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      width: 66%; margin: 0 auto; height: 100%;
-    }
-    .side-col {
-      display: flex; flex-direction: column; justify-content: space-between;
-      padding: 10px; box-sizing: border-box;
-    }
-    .left-col textarea {
-      width: 100%; border: none; background: transparent;
-      resize: none; overflow: hidden;
-      font-size: 2.625em; line-height: 1.2em;
-    }
-    .center-col {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 10px; box-sizing: border-box;
-      overflow: hidden;
-    }
-    .overall-title {
-      width: 100%; text-align: center; background: yellow;
-      padding: 5px; font-size: 1.5em; font-weight: bold;
-      border: none; outline: none; margin-bottom: 10px;
-    }
-    .panel {
-      background: yellow; padding: 9px; margin: 5px;
-      border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      width: 100%; max-width: 500px; text-align: center;
-      transition: background-color 0.5s;
-    }
-    .clock {
-      background: #e0f7fa; color: #006064; margin-bottom: 10px;
-    }
-    .time-display {
-      font-size: 2em; margin: 5px 0;
-    }
-    input[type=number], .title-input {
-      width: 50px; padding: 4px; font-size: 0.9em; margin: 2px;
-    }
-    .controls button {
-      margin: 2px; padding: 4px 8px; font-size: 0.85em;
-    }
-    .global-controls {
-      margin-top: 10px;
-    }
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; font-family:Arial,sans-serif; background:#f4f8fb; }
+    .container { display:grid; grid-template-columns:1fr 2fr; width:66%; height:100%; margin:0 auto; }
+    .left-col { padding:10px; display:flex; flex-direction:column; justify-content:space-between; }
+    .left-col textarea { width:100%; border:none; background:transparent; resize:none; overflow:hidden; font-size:2.6em; line-height:1.2em; height:calc(1.2em*3); }
+    .center-col { padding:10px; display:flex; flex-direction:column; align-items:center; overflow:hidden; }
+    .overall-title { width:100%; text-align:center; background:yellow; padding:5px; font-size:1.5em; font-weight:bold; margin-bottom:10px; border:none; }
+    .panel { background:yellow; border-radius:8px; box-shadow:0 0 5px rgba(0,0,0,0.1); padding:9px; margin:5px; width:100%; max-width:500px; text-align:center; transition:background-color .5s; }
+    .clock { background:#e0f7fa; color:#006064; margin-bottom:10px; }
+    .time-display { font-size:2em; margin:5px 0; }
+    .title-input { width:300px; border:none; background:transparent; text-align:center; font-size:1.2em; font-weight:bold; }
+    input[type=number] { width:50px; padding:4px; font-size:.9em; margin:2px; }
+    .controls button, .global-controls button { margin:2px; padding:4px 8px; font-size:.85em; }
+    .global-controls { margin-top:10px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="side-col left-col">
-      <textarea rows="3" placeholder="Note 1"></textarea>
-      <textarea rows="3" placeholder="Note 2"></textarea>
-      <textarea rows="3" placeholder="Note 3"></textarea>
-      <textarea rows="3" placeholder="Note 4"></textarea>
-      <textarea rows="3" placeholder="Note 5"></textarea>
+    <div class="left-col">
+      <textarea placeholder="Note 1"></textarea>
+      <textarea placeholder="Note 2"></textarea>
+      <textarea placeholder="Note 3"></textarea>
+      <textarea placeholder="Note 4"></textarea>
+      <textarea placeholder="Note 5"></textarea>
     </div>
     <div class="center-col">
       <input id="mainTitle" class="overall-title" type="text" value="Roby’s Test Timer">
@@ -72,43 +37,40 @@
         <h2>Current Time</h2>
         <div id="currentTime" class="time-display">--:--:--</div>
       </div>
-      <!-- Timers -->
+      <!-- Timer 1 -->
       <div id="panel1" class="panel">
         <input id="title1" class="title-input" value="Timer 1">
         <div id="display1" class="time-display">00:00:00</div>
-        <input id="h1" type="number" placeholder="HH">
-        <input id="m1" type="number" placeholder="MM">
-        <input id="s1" type="number" placeholder="SS">
+        <input id="h1" type="number" placeholder="HH"><input id="m1" type="number" placeholder="MM"><input id="s1" type="number" placeholder="SS">
         <div class="controls">
           <button onclick="startTimer(1)">Start</button>
           <button id="toggle1" onclick="toggleTimer(1)">Pause</button>
           <button onclick="resetTimer(1)">Reset</button>
         </div>
       </div>
+      <!-- Timer 2 -->
       <div id="panel2" class="panel">
         <input id="title2" class="title-input" value="Timer 2">
         <div id="display2" class="time-display">00:00:00</div>
-        <input id="h2" type="number" placeholder="HH">
-        <input id="m2" type="number" placeholder="MM">
-        <input id="s2" type="number" placeholder="SS">
+        <input id="h2" type="number" placeholder="HH"><input id="m2" type="number" placeholder="MM"><input id="s2" type="number" placeholder="SS">
         <div class="controls">
           <button onclick="startTimer(2)">Start</button>
           <button id="toggle2" onclick="toggleTimer(2)">Pause</button>
           <button onclick="resetTimer(2)">Reset</button>
         </div>
       </div>
+      <!-- Timer 3 -->
       <div id="panel3" class="panel">
         <input id="title3" class="title-input" value="Timer 3">
         <div id="display3" class="time-display">00:00:00</div>
-        <input id="h3" type="number" placeholder="HH">
-        <input id="m3" type="number" placeholder="MM">
-        <input id="s3" type="number" placeholder="SS">
+        <input id="h3" type="number" placeholder="HH"><input id="m3" type="number" placeholder="MM"><input id="s3" type="number" placeholder="SS">
         <div class="controls">
           <button onclick="startTimer(3)">Start</button>
           <button id="toggle3" onclick="toggleTimer(3)">Pause</button>
           <button onclick="resetTimer(3)">Reset</button>
         </div>
       </div>
+      <!-- All Timers -->
       <div class="panel global-controls">
         <label for="warning">Warning Time (min):</label>
         <input id="warning" type="number" placeholder="e.g. 1">
@@ -125,63 +87,43 @@
     <source src="audio/end.ogg" type="audio/ogg">
   </audio>
   <script>
-    const timers = {};
-    const remaining = {};
-    const paused = {};
+    const timers = {}, remaining = {}, paused = {};
     window.addEventListener('load', () => {
       const warn = document.getElementById('warningSound');
       const fin = document.getElementById('finalSound');
-      const unlock = () => { warn.play().then(() => warn.pause()); fin.play().then(() => fin.pause()); document.body.removeEventListener('click', unlock); };
+      const unlock = () => { warn.play().then(()=>warn.pause()); fin.play().then(()=>fin.pause()); document.body.removeEventListener('click', unlock); };
       document.body.addEventListener('click', unlock);
     });
     function formatTime(sec) {
-      const h = String(Math.floor(sec / 3600)).padStart(2, '0');
-      const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
+      const h=String(Math.floor(sec/3600)).padStart(2,'0'),
+            m=String(Math.floor((sec%3600)/60)).padStart(2,'0'),
+            s=String(sec%60).padStart(2,'0');
       return `${h}:${m}:${s}`;
     }
     function startTimer(n) {
-      const h = parseInt(document.getElementById('h' + n).value) || 0;
-      const m = parseInt(document.getElementById('m' + n).value) || 0;
-      const s = parseInt(document.getElementById('s' + n).value) || 0;
-      remaining[n] = h * 3600 + m * 60 + s;
-      if (remaining[n] <= 0) return;
-      paused[n] = false;
-      document.getElementById('toggle' + n).textContent = 'Pause';
+      const h=parseInt(document.getElementById('h'+n).value)||0,
+            m=parseInt(document.getElementById('m'+n).value)||0,
+            s=parseInt(document.getElementById('s'+n).value)||0;
+      remaining[n]=h*3600+m*60+s; if(remaining[n]<=0) return;
+      paused[n]=false; document.getElementById('toggle'+n).textContent='Pause';
       runInterval(n);
     }
     function runInterval(n) {
       clearInterval(timers[n]);
-      const threshold = (parseInt(document.getElementById('warning').value) || 0) * 60;
-      timers[n] = setInterval(() => {
-        if (paused[n]) return;
+      const thresh=(parseInt(document.getElementById('warning').value)||0)*60;
+      timers[n]=setInterval(()=>{
+        if(paused[n]) return;
         remaining[n]--;
-        document.getElementById('display' + n).textContent = formatTime(remaining[n]);
-        const panel = document.getElementById('panel' + n);
-        if (remaining[n] === threshold && threshold > 0) {
-          document.getElementById('warningSound').play().catch(() => {});
-          panel.style.backgroundColor = 'orange';
-        }
-        if (remaining[n] <= 0) {
-          clearInterval(timers[n]);
-          document.getElementById('display' + n).textContent = '00:00:00';
-          document.getElementById('finalSound').play().catch(() => {});
-          panel.style.backgroundColor = 'red';
-        }
-      }, 1000);
+        document.getElementById('display'+n).textContent=formatTime(remaining[n]);
+        const panel=document.getElementById('panel'+n);
+        if(remaining[n]===thresh&&thresh>0){ document.getElementById('warningSound').play().catch(()=>{}); panel.style.backgroundColor='orange'; }
+        if(remaining[n]<=0){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('finalSound').play().catch(()=>{}); panel.style.backgroundColor='red'; }
+      },1000);
     }
-    function toggleTimer(n) {
-      paused[n] = !paused[n];
-      document.getElementById('toggle' + n).textContent = paused[n] ? 'Resume' : 'Pause';
-    }
-    function resetTimer(n) {
-      clearInterval(timers[n]);
-      document.getElementById('display' + n).textContent = '00:00:00';
-      document.getElementById('panel' + n).style.backgroundColor = 'yellow';
-      paused[n] = true;
-    }
-    function startAllTimers() { startTimer(1); startTimer(2); startTimer(3); }
-    setInterval(() => { document.getElementById('currentTime').textContent = new Date().toLocaleTimeString(); }, 1000);
+    function toggleTimer(n){ paused[n]=!paused[n]; document.getElementById('toggle'+n).textContent=paused[n]?'Resume':'Pause'; }
+    function resetTimer(n){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('panel'+n).style.backgroundColor='yellow'; paused[n]=true; }
+    function startAllTimers(){ [1,2,3].forEach(n=>startTimer(n)); }
+    setInterval(()=>{ document.getElementById('currentTime').textContent=new Date().toLocaleTimeString(); },1000);
   </script>
 </body>
 </html>
