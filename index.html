@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roby Timer and Notes</title>
-  <link rel="manifest" href="manifest.json">
+  <title>Roby Timer and Notes</n  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4f8fb">
   <style>
     html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background-color: #f4f8fb; }
@@ -43,8 +42,8 @@
         <input type="number" id="m1" placeholder="MM">
         <input type="number" id="s1" placeholder="SS">
         <div class="controls">
-          <button onclick="startTimer(1)">Start</button>
-          <button onclick="pauseTimer(1)">Pause</button>
+          <button id="start1" onclick="startTimer(1)">Start</button>
+          <button id="toggle1" onclick="toggleTimer(1)">Pause</button>
           <button onclick="resetTimer(1)">Reset</button>
         </div>
       </div>
@@ -55,8 +54,8 @@
         <input type="number" id="m2" placeholder="MM">
         <input type="number" id="s2" placeholder="SS">
         <div class="controls">
-          <button onclick="startTimer(2)">Start</button>
-          <button onclick="pauseTimer(2)">Pause</button>
+          <button id="start2" onclick="startTimer(2)">Start</button>
+          <button id="toggle2" onclick="toggleTimer(2)">Pause</button>
           <button onclick="resetTimer(2)">Reset</button>
         </div>
       </div>
@@ -67,8 +66,8 @@
         <input type="number" id="m3" placeholder="MM">
         <input type="number" id="s3" placeholder="SS">
         <div class="controls">
-          <button onclick="startTimer(3)">Start</button>
-          <button onclick="pauseTimer(3)">Pause</button>
+          <button id="start3" onclick="startTimer(3)">Start</button>
+          <button id="toggle3" onclick="toggleTimer(3)">Pause</button>
           <button onclick="resetTimer(3)">Reset</button>
         </div>
       </div>
@@ -80,32 +79,85 @@
     </div>
   </div>
 
-  <!-- Audio Elements with OGG fallback -->
-  <audio id="warningSound" preload="auto">
+  <audio id="warningSound" preload>
     <source src="audio/warn.mp3" type="audio/mpeg">
     <source src="audio/warn.ogg" type="audio/ogg">
   </audio>
-  <audio id="finalSound" preload="auto">
+  <audio id="finalSound" preload>
     <source src="audio/end.mp3" type="audio/mpeg">
     <source src="audio/end.ogg" type="audio/ogg">
   </audio>
 
   <script>
-    let timers = {};
+    const timers = {};
+    const remaining = {};
+    const paused = {};
+
     window.addEventListener('load', () => {
       const warn = document.getElementById('warningSound');
       const fin = document.getElementById('finalSound');
       const unlock = () => { warn.play().then(()=>warn.pause()); fin.play().then(()=>fin.pause()); document.body.removeEventListener('click', unlock); };
       document.body.addEventListener('click', unlock);
     });
-    function formatTime(sec) { const h=String(Math.floor(sec/3600)).padStart(2,'0'); const m=String(Math.floor((sec%3600)/60)).padStart(2,'0'); const s=String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
-    function startTimer(n) { const panel=document.getElementById('panel'+n); panel.style.backgroundColor='yellow'; const h=parseInt(document.getElementById('h'+n).value)||0; const m=parseInt(document.getElementById('m'+n).value)||0; const s=parseInt(document.getElementById('s'+n).value)||0; let remaining=h*3600+m*60+s; if(remaining<=0) return; clearInterval(timers[n]); const thresh=(parseInt(document.getElementById('warning').value)||0)*60; timers[n]=setInterval(()=>{ remaining--; document.getElementById('display'+n).textContent=formatTime(remaining); if(remaining===thresh&&thresh>0){ document.getElementById('warningSound').play().catch(()=>{}); panel.style.backgroundColor='orange'; } if(remaining<=0){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('finalSound').play().catch(()=>{}); panel.style.backgroundColor='red'; } },1000); }
-    function pauseTimer(n){ clearInterval(timers[n]); }
-    function resetTimer(n){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('panel'+n).style.backgroundColor='yellow'; }
-    function startAllTimers(){ startTimer(1); startTimer(2); startTimer(3); }
-    function updateTime(){ document.getElementById('currentTime').textContent=new Date().toLocaleTimeString(); }
+
+    function formatTime(sec) {
+      const h = String(Math.floor(sec/3600)).padStart(2,'0');
+      const m = String(Math.floor((sec%3600)/60)).padStart(2,'0');
+      const s = String(sec%60).padStart(2,'0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function startTimer(n) {
+      const h = parseInt(document.getElementById('h'+n).value)||0;
+      const m = parseInt(document.getElementById('m'+n).value)||0;
+      const s = parseInt(document.getElementById('s'+n).value)||0;
+      remaining[n] = h*3600 + m*60 + s;
+      if(remaining[n]<=0) return;
+      paused[n] = false;
+      document.getElementById('toggle'+n).textContent = 'Pause';
+      runInterval(n);
+    }
+
+    function runInterval(n) {
+      clearInterval(timers[n]);
+      const thresh = (parseInt(document.getElementById('warning').value)||0)*60;
+      timers[n] = setInterval(() => {
+        if(paused[n]) return;
+        remaining[n]--;
+        document.getElementById('display'+n).textContent = formatTime(remaining[n]);
+        const panel = document.getElementById('panel'+n);
+        if(remaining[n] === thresh && thresh>0) {
+          document.getElementById('warningSound').play().catch(()=>{});
+          panel.style.backgroundColor = 'orange';
+        }
+        if(remaining[n] <= 0) {
+          clearInterval(timers[n]);
+          document.getElementById('display'+n).textContent = '00:00:00';
+          document.getElementById('finalSound').play().catch(()=>{});
+          panel.style.backgroundColor = 'red';
+        }
+      }, 1000);
+    }
+
+    function toggleTimer(n) {
+      paused[n] = !paused[n];
+      const btn = document.getElementById('toggle'+n);
+      btn.textContent = paused[n] ? 'Resume' : 'Pause';
+    }
+
+    function resetTimer(n) {
+      clearInterval(timers[n]);
+      document.getElementById('display'+n).textContent = '00:00:00';
+      document.getElementById('panel'+n).style.backgroundColor = 'yellow';
+      paused[n] = true;
+    }
+
+    function startAllTimers() { startTimer(1); startTimer(2); startTimer(3); }
+
+    function updateTime() { document.getElementById('currentTime').textContent = new Date().toLocaleTimeString(); }
     setInterval(updateTime,1000); updateTime();
-    if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'));
+
+    if('serviceWorker' in navigator) window.addEventListener('load', ()=> navigator.serviceWorker.register('service-worker.js'));
   </script>
 </body>
 </html>
