@@ -8,12 +8,9 @@
   <meta name="theme-color" content="#f4f8fb">
   <style>
     html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background-color: #f4f8fb; }
-    .container { display: grid; grid-template-columns: 1fr 1fr 1fr; height: 100%; }
-    .side-col { display: flex; flex-direction: column; padding: 10px; box-sizing: border-box; overflow: hidden; }
-    .left-col { justify-content: space-between; }
-    .left-col textarea { width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden; font-size: 1.5em; line-height: 1.2em; height: calc(1.2em * 3); }
-    .right-col { display: flex; justify-content: center; align-items: center; }
-    .right-col img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .container { display: grid; grid-template-columns: 1fr 2fr; width: 66%; height: 100%; margin: 0 auto; }
+    .side-col { display: flex; flex-direction: column; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+    .left-col textarea { width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden; font-size: 2.625em; line-height: 1.2em; }
     .center-col { display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
     .overall-title { background-color: yellow; padding: 5px; font-size: 1.5em; font-weight: bold; margin-bottom: 10px; width: 100%; text-align: center; border: none; outline: none; }
     .panel { background-color: yellow; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); padding: 9px; margin: 5px; width: 100%; max-width: 500px; text-align: center; transition: background-color 0.5s ease; }
@@ -26,23 +23,19 @@
 </head>
 <body>
   <div class="container">
-    <!-- Left Column: 5 Notes -->
     <div class="side-col left-col">
-      <textarea placeholder="Note 1"></textarea>
-      <textarea placeholder="Note 2"></textarea>
-      <textarea placeholder="Note 3"></textarea>
-      <textarea placeholder="Note 4"></textarea>
-      <textarea placeholder="Note 5"></textarea>
+      <textarea rows="3" placeholder="Note 1"></textarea>
+      <textarea rows="3" placeholder="Note 2"></textarea>
+      <textarea rows="3" placeholder="Note 3"></textarea>
+      <textarea rows="3" placeholder="Note 4"></textarea>
+      <textarea rows="3" placeholder="Note 5"></textarea>
     </div>
-
-    <!-- Center Column: Timer -->
     <div class="center-col">
-      <input class="overall-title" id="mainTitle" value="Roby’s Test Timer">
+      <input class="overall-title" id="mainTitle" type="text" value="Roby’s Test Timer">
       <div class="panel clock">
         <h2>Current Time</h2>
         <div class="time-display" id="currentTime">--:--:--</div>
       </div>
-      <!-- Timer Panels -->
       <div class="panel" id="panel1">
         <input class="title-input" id="title1" value="Timer 1">
         <div class="time-display" id="display1">00:00:00</div>
@@ -85,51 +78,28 @@
         <button onclick="startAllTimers()">Start All Timers</button>
       </div>
     </div>
-
-    <!-- Right Column: Universe Image -->
-    <div class="side-col right-col">
-      <img src="images/universe.jpg" alt="Universe">
-    </div>
   </div>
 
-  <!-- Audio Elements -->
+  <!-- Audio Elements with OGG fallback -->
   <audio id="warningSound" preload="auto">
     <source src="audio/warn.mp3" type="audio/mpeg">
+    <source src="audio/warn.ogg" type="audio/ogg">
   </audio>
   <audio id="finalSound" preload="auto">
     <source src="audio/end.mp3" type="audio/mpeg">
+    <source src="audio/end.ogg" type="audio/ogg">
   </audio>
 
   <script>
     let timers = {};
-    // Unlock audio on first interaction
     window.addEventListener('load', () => {
       const warn = document.getElementById('warningSound');
       const fin = document.getElementById('finalSound');
-      const unlock = () => { warn.play().then(()=>warn.pause()).catch(()=>{}); fin.play().then(()=>fin.pause()).catch(()=>{}); document.body.removeEventListener('click', unlock); };
+      const unlock = () => { warn.play().then(()=>warn.pause()); fin.play().then(()=>fin.pause()); document.body.removeEventListener('click', unlock); };
       document.body.addEventListener('click', unlock);
     });
     function formatTime(sec) { const h=String(Math.floor(sec/3600)).padStart(2,'0'); const m=String(Math.floor((sec%3600)/60)).padStart(2,'0'); const s=String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
-    function startTimer(n) {
-      const panel = document.getElementById('panel'+n);
-      panel.style.backgroundColor='yellow';
-      const h=parseInt(document.getElementById('h'+n).value)||0;
-      const m=parseInt(document.getElementById('m'+n).value)||0;
-      const s=parseInt(document.getElementById('s'+n).value)||0;
-      let remaining=h*3600+m*60+s; if(remaining<=0) return;
-      clearInterval(timers[n]);
-      const thresh=(parseInt(document.getElementById('warning').value)||0)*60;
-      timers[n]=setInterval(()=>{
-        remaining--; document.getElementById('display'+n).textContent=formatTime(remaining);
-        if(remaining===thresh && thresh>0) {
-          document.getElementById('warningSound').play().catch(()=>{});
-          panel.style.backgroundColor='orange';
-        }
-        if(remaining<=0) {
-          clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('finalSound').play().catch(()=>{}); panel.style.backgroundColor='red';
-        }
-      },1000);
-    }
+    function startTimer(n) { const panel=document.getElementById('panel'+n); panel.style.backgroundColor='yellow'; const h=parseInt(document.getElementById('h'+n).value)||0; const m=parseInt(document.getElementById('m'+n).value)||0; const s=parseInt(document.getElementById('s'+n).value)||0; let remaining=h*3600+m*60+s; if(remaining<=0) return; clearInterval(timers[n]); const thresh=(parseInt(document.getElementById('warning').value)||0)*60; timers[n]=setInterval(()=>{ remaining--; document.getElementById('display'+n).textContent=formatTime(remaining); if(remaining===thresh&&thresh>0){ document.getElementById('warningSound').play().catch(()=>{}); panel.style.backgroundColor='orange'; } if(remaining<=0){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('finalSound').play().catch(()=>{}); panel.style.backgroundColor='red'; } },1000); }
     function pauseTimer(n){ clearInterval(timers[n]); }
     function resetTimer(n){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('panel'+n).style.backgroundColor='yellow'; }
     function startAllTimers(){ startTimer(1); startTimer(2); startTimer(3); }
