@@ -7,83 +7,37 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4f8fb">
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%; overflow: hidden;
-      font-family: Arial, sans-serif; background-color: #f4f8fb;
-    }
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      height: 100%;
-    }
-    .side-col {
-      display: flex; flex-direction: column;
-      padding: 10px; box-sizing: border-box;
-      overflow: auto;
-    }
-    .left-col .image-container {
-      flex: 1 1 auto;
-      display: flex; justify-content: center; align-items: center;
-      margin-bottom: 10px;
-    }
-    .left-col .image-container img {
-      max-width: 100%; max-height: 100%; object-fit: contain;
-    }
-    .text-container {
-      flex: 2 1 auto; display: flex; flex-direction: column; gap: 8px;
-    }
-    .text-container textarea {
-      width: 100%; border: none; outline: none;
-      background: transparent; resize: none; overflow: hidden;
-      font-size: 1em; line-height: 1.2em; height: calc(1.2em * 3);
-    }
-    .right-col .text-container textarea {
-      /* same styling for right column */
-    }
-    .center-col {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 10px;
-      box-sizing: border-box; overflow: auto;
-    }
-    .overall-title {
-      background-color: yellow; padding: 5px;
-      font-size: 1.2em; font-weight: bold;
-      margin-bottom: 5px; width: 100%; text-align: center;
-    }
-    .panel {
-      background-color: yellow; border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      padding: 9px; margin: 5px; width: 100%; max-width: 500px;
-      text-align: center; transition: background-color 0.5s ease;
-    }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: Arial, sans-serif; background-color: #f4f8fb; }
+    .container { display: grid; grid-template-columns: 1fr 1fr 1fr; height: 100%; }
+    .side-col { display: flex; flex-direction: column; padding: 10px; box-sizing: border-box; overflow: hidden; }
+    .left-col { justify-content: space-between; }
+    .left-col textarea { width: 100%; border: none; outline: none; background: transparent; resize: none; overflow: hidden; font-size: 1.5em; line-height: 1.2em; height: calc(1.2em * 3); }
+    .right-col { display: flex; justify-content: center; align-items: center; }
+    .right-col img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .center-col { display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
+    .overall-title { background-color: yellow; padding: 5px; font-size: 1.5em; font-weight: bold; margin-bottom: 10px; width: 100%; text-align: center; border: none; outline: none; }
+    .panel { background-color: yellow; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); padding: 9px; margin: 5px; width: 100%; max-width: 500px; text-align: center; transition: background-color 0.5s ease; }
     .clock { background-color: #e0f7fa; color: #006064; margin-bottom: 10px; }
     .time-display { font-size: 2em; margin: 5px 0; }
-    input[type=number], .title-input {
-      width: 50px; padding: 4px; font-size: 0.9em; margin: 2px;
-    }
+    input[type=number], .title-input { width: 50px; padding: 4px; font-size: 0.9em; margin: 2px; }
     .controls button { margin: 2px; padding: 4px 8px; font-size: 0.85em; }
     .global-controls { margin-top: 10px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Left Column: Image + Notes -->
+    <!-- Left Column: 5 Notes -->
     <div class="side-col left-col">
-      <div class="image-container">
-        <img src="images/expansion.jpg" alt="Expansion">
-      </div>
-      <div class="text-container">
-        <textarea placeholder="Note 1"></textarea>
-        <textarea placeholder="Note 2"></textarea>
-        <textarea placeholder="Note 3"></textarea>
-        <textarea placeholder="Note 4"></textarea>
-        <textarea placeholder="Note 5"></textarea>
-      </div>
+      <textarea placeholder="Note 1"></textarea>
+      <textarea placeholder="Note 2"></textarea>
+      <textarea placeholder="Note 3"></textarea>
+      <textarea placeholder="Note 4"></textarea>
+      <textarea placeholder="Note 5"></textarea>
     </div>
 
     <!-- Center Column: Timer -->
     <div class="center-col">
-      <div class="overall-title">My Countdown Timers</div>
+      <input class="overall-title" id="mainTitle" value="Roby’s Test Timer">
       <div class="panel clock">
         <h2>Current Time</h2>
         <div class="time-display" id="currentTime">--:--:--</div>
@@ -132,90 +86,56 @@
       </div>
     </div>
 
-    <!-- Right Column: Additional Notes -->
+    <!-- Right Column: Universe Image -->
     <div class="side-col right-col">
-      <div class="text-container">
-        <textarea placeholder="Side Note 1"></textarea>
-        <textarea placeholder="Side Note 2"></textarea>
-        <textarea placeholder="Side Note 3"></textarea>
-        <textarea placeholder="Side Note 4"></textarea>
-        <textarea placeholder="Side Note 5"></textarea>
-      </div>
+      <img src="images/universe.jpg" alt="Universe">
     </div>
   </div>
 
   <!-- Audio Elements -->
-  <audio id="warnSound" preload="auto">
-    <source src="audio/beep_short.ogg" type="audio/ogg">
-    <source src="audio/beep_short.mp3" type="audio/mpeg">
+  <audio id="warningSound" preload="auto">
+    <source src="audio/warn.mp3" type="audio/mpeg">
   </audio>
   <audio id="finalSound" preload="auto">
-    <source src="audio/alarm_clock.ogg" type="audio/ogg">
-    <source src="audio/alarm_clock.mp3" type="audio/mpeg">
+    <source src="audio/end.mp3" type="audio/mpeg">
   </audio>
 
   <script>
     let timers = {};
-
-    // Unlock audio on first user interaction
+    // Unlock audio on first interaction
     window.addEventListener('load', () => {
-      const warn = document.getElementById('warnSound');
+      const warn = document.getElementById('warningSound');
       const fin = document.getElementById('finalSound');
-      const unlock = () => {
-        warn.play().then(() => warn.pause()).catch(()=>{});
-        fin.play().then(() => fin.pause()).catch(()=>{});
-        document.body.removeEventListener('click', unlock);
-      };
+      const unlock = () => { warn.play().then(()=>warn.pause()).catch(()=>{}); fin.play().then(()=>fin.pause()).catch(()=>{}); document.body.removeEventListener('click', unlock); };
       document.body.addEventListener('click', unlock);
     });
-
-    function formatTime(sec) {
-      const h = String(Math.floor(sec/3600)).padStart(2,'0');
-      const m = String(Math.floor((sec%3600)/60)).padStart(2,'0');
-      const s = String(sec%60).padStart(2,'0');
-      return `${h}:${m}:${s}`;
-    }
-
+    function formatTime(sec) { const h=String(Math.floor(sec/3600)).padStart(2,'0'); const m=String(Math.floor((sec%3600)/60)).padStart(2,'0'); const s=String(sec%60).padStart(2,'0'); return `${h}:${m}:${s}`; }
     function startTimer(n) {
       const panel = document.getElementById('panel'+n);
       panel.style.backgroundColor='yellow';
-      const h = parseInt(document.getElementById('h'+n).value)||0;
-      const m = parseInt(document.getElementById('m'+n).value)||0;
-      const s = parseInt(document.getElementById('s'+n).value)||0;
-      let remaining = h*3600 + m*60 + s;
-      if(remaining<=0) return;
+      const h=parseInt(document.getElementById('h'+n).value)||0;
+      const m=parseInt(document.getElementById('m'+n).value)||0;
+      const s=parseInt(document.getElementById('s'+n).value)||0;
+      let remaining=h*3600+m*60+s; if(remaining<=0) return;
       clearInterval(timers[n]);
-      const warnThreshold = (parseInt(document.getElementById('warning').value)||0)*60;
+      const thresh=(parseInt(document.getElementById('warning').value)||0)*60;
       timers[n]=setInterval(()=>{
         remaining--; document.getElementById('display'+n).textContent=formatTime(remaining);
-        if(remaining===warnThreshold && warnThreshold>0) {
-          let count=0;
-          const iv=setInterval(()=>{
-            document.getElementById('warnSound').play().catch(()=>{});
-            count++;
-            if(count>=3) clearInterval(iv);
-          },500);
+        if(remaining===thresh && thresh>0) {
+          document.getElementById('warningSound').play().catch(()=>{});
           panel.style.backgroundColor='orange';
         }
-        if(remaining<=0){
-          clearInterval(timers[n]);
-          document.getElementById('display'+n).textContent='00:00:00';
-          document.getElementById('finalSound').play().catch(()=>{});
-          panel.style.backgroundColor='red';
+        if(remaining<=0) {
+          clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('finalSound').play().catch(()=>{}); panel.style.backgroundColor='red';
         }
       },1000);
     }
-
     function pauseTimer(n){ clearInterval(timers[n]); }
     function resetTimer(n){ clearInterval(timers[n]); document.getElementById('display'+n).textContent='00:00:00'; document.getElementById('panel'+n).style.backgroundColor='yellow'; }
     function startAllTimers(){ startTimer(1); startTimer(2); startTimer(3); }
-
-    // Live clock
     function updateTime(){ document.getElementById('currentTime').textContent=new Date().toLocaleTimeString(); }
     setInterval(updateTime,1000); updateTime();
-
-    // Register service worker
-    if('serviceWorker' in navigator){ window.addEventListener('load',()=> navigator.serviceWorker.register('service-worker.js')); }
+    if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js'));
   </script>
 </body>
 </html>
